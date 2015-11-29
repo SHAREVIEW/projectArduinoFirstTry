@@ -49,8 +49,8 @@
   <SolidColorBrush x:Key="ExpanderButtonBorderBrush" Color="{StaticResource Color_004}" />
   <SolidColorBrush x:Key="ExpanderButtonHoverBackgroundBrush" Color="{StaticResource Color_007}" />
   <SolidColorBrush x:Key="ExpanderButtonHoverBorderBrush" Color="{StaticResource Color_003}" />
-  <SolidColorBrush x:Key="ExpanderButtonPressedBackgroundBrush" Color="{StaticResource Color_024}" />
-  <SolidColorBrush x:Key="ExpanderButtonPressedBorderBrush" Color="{StaticResource Color_024}" />
+  <SolidColorBrush x:Key="ExpanderButtonPressedBackgroundBrush" Color="{StaticResource Color_003}" />
+  <SolidColorBrush x:Key="ExpanderButtonPressedBorderBrush" Color="{StaticResource Color_003}" />
   <SolidColorBrush x:Key="ExpanderArrowHoverBorderBrush" Color="{StaticResource Color_002}" />
   <SolidColorBrush x:Key="ExpanderArrowPressedBorderBrush" Color="{StaticResource Color_009}" />
   <SolidColorBrush x:Key="ExpanderDisabledForegroundBrush" Color="{StaticResource Color_007}" />
