@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace projectArduinoFirstTry.Sources
 {
@@ -12,6 +13,8 @@ namespace projectArduinoFirstTry.Sources
         public string Name;
         public DateTime Date;
         public long Code;
+        public string DangersDesc;
+        public FlowDocument UserDesc;
 
         public Medicine(string name, DateTime dateTime, int code) : this()
         {

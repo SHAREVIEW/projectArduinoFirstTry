@@ -9,6 +9,7 @@
                 <ResourceDictionary Source="Themes/MetroDark/MetroDark.MSControls.Toolkit.Implicit.xaml" />
                 <ResourceDictionary Source="Themes/GlossyButton/GlassButton.xaml"/>
                 <ResourceDictionary Source="Themes/RoundedButton.xaml"/>
+                <ResourceDictionary Source="Themes/CustomButton/ButtonStyle.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
