@@ -8,6 +8,9 @@ using System.Web.Script.Serialization;
 using BluetoothSample.Services;
 using projectArduinoFirstTry.Sources;
 using System.Windows.Media.Imaging;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace projectArduinoFirstTry
 {
@@ -24,6 +27,7 @@ namespace projectArduinoFirstTry
         private readonly SpeechRecognitionEngine _speechRecognizer = new SpeechRecognitionEngine();
         private bool _isMicEnabled = true;
         private IReceiverBluetoothService receiver = new ReceiverBluetoothService();
+        
 
         public MainWindow()
         {
@@ -32,6 +36,8 @@ namespace projectArduinoFirstTry
             JasonHandler();
 
             InitializeSpeechRecognizer();
+
+            //BluetoothHandler.MakeConnection();
         }
 
         private void JasonHandler()
