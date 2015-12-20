@@ -2,29 +2,44 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace projectArduinoFirstTry.Sources
 {
     internal static class RowAdder
     {
-        public static void AddRow(string medicineName, int code, DateTime dateTime, Grid grid)
+        public static void AddRow(Medicine medicine, Grid grid)
         {
             _grid = grid;
 
             int col = 0;
 
-            AddTextBlock(col, _rowCount, code.ToString());
-            AddTextBlock(++col, _rowCount, medicineName);
-            AddTextBlock(++col, _rowCount, dateTime.ToShortDateString());
+            AddTextBlock(col, _rowCount, medicine.Code.ToString());
+            AddTextBlock(++col, _rowCount, medicine.Name);
+            AddTextBlock(++col, _rowCount, medicine.Date.ToShortDateString());
+
+            if(File.Exists(medicine.ImagePath))
+                AddImage(5, _rowCount, medicine.ImagePath);
 
             _rowCount += 1;
 
             if (_rowCount >= RowSpan)
             {
-                RowSpan += 2;
+                RowSpan += 1;
                 AddLineInTable();
             }
+        }
+
+        public static void AddRow(Medicine medicine)
+        {
+            if (_grid == null)
+            {
+                return;
+            }
+
+            AddRow(medicine, _grid);
         }
 
         private static void AddLineInTable()
@@ -60,9 +75,32 @@ namespace projectArduinoFirstTry.Sources
             _grid.Children.Add(textBlock);
         }
 
-        private static void AddPic(int col, int row, string imagePath)
+        private static void AddImage(int col, int row, string imagePath)
         {
+            //Set Image Source
+            Image image = new Image();
+            image.Height = 40;
+            image.Width = 80;
+            
+            BitmapImage bitImage = new BitmapImage();
+            bitImage.BeginInit();
+            bitImage.UriSource = new Uri(imagePath);
+            bitImage.EndInit();
 
+            image.Source = bitImage;
+
+            //Put image inside a container
+            InlineUIContainer inlineUiContainer = new InlineUIContainer();
+            inlineUiContainer.Child = image;
+
+            //New Text Block
+            TextBlock textBlock = new TextBlock();
+            textBlock.Inlines.Add(inlineUiContainer);
+            Grid.SetRow(textBlock, row);
+            Grid.SetColumn(textBlock, col);
+            textBlock.Padding = new Thickness(10, 10, 10, 10);
+            textBlock.TextAlignment = TextAlignment.Center;
+            _grid.Children.Add(textBlock);
         }
 
         private static void AddCell(int row)
@@ -70,7 +108,7 @@ namespace projectArduinoFirstTry.Sources
 
         }
 
-        public static int RowSpan = 26;
+        public static int RowSpan = 1;
         private static Grid _grid;
         static private int _rowCount = 1;
     }

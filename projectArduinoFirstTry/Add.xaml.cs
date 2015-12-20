@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Microsoft.Win32;
 using projectArduinoFirstTry.Sources;
 
 namespace projectArduinoFirstTry
@@ -21,8 +12,11 @@ namespace projectArduinoFirstTry
     /// </summary>
     public partial class Add : Window
     {
-        public Add()
+        private MainWindow _mainWindow;
+
+        public Add(MainWindow mainWindow)
         {
+            _mainWindow = mainWindow;
             InitializeComponent();
         }
 
@@ -33,17 +27,36 @@ namespace projectArduinoFirstTry
 
         private void OnOk(object sender, RoutedEventArgs e)
         {
-            var flowDocument = UsagesByUser.Document;
-            var medicine = new Medicine("Acamol", DateTime.Now, 10);
-           
-            Medicine newMedicine;
-            if (!MainWindow.Dict.TryGetValue(130, out newMedicine))
+            var medicineName = MedicineName.Text;
+            var medicineCode = string.IsNullOrEmpty(MedicineCode.Text) ? 0 : int.Parse(MedicineCode.Text);
+            var medicineDate = MedicineDate.DisplayDate;
+            Medicine medicine = new Medicine(medicineName, medicineDate, medicineCode);
+
+            medicine.ImagePath = txtEditor.Text;
+            medicine.UserDesc = new TextRange(UsagesByUser.Document.ContentStart, UsagesByUser.Document.ContentEnd).Text;
+
+            List<Medicine> medicines = MainWindow.Dict;
+            if (medicines.Contains(medicine))
             {
-                newMedicine = medicine;
-                MainWindow.Dict.Add(130, newMedicine);
+                return;
             }
 
-            newMedicine.UserDesc = flowDocument;
+            medicines.Add(medicine);
+            RowAdder.AddRow(medicine);
+            _mainWindow.ExpandColums();
+        }
+
+        private void btnOpenFile_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+                txtEditor.Text = openFileDialog.FileName;
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
         }
     }
 }

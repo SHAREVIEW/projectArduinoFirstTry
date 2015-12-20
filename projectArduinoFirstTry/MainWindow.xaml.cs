@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Speech.Recognition;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Web.Script.Serialization;
+using BluetoothSample.Services;
 using projectArduinoFirstTry.Sources;
-using Microsoft.WindowsAzure.MobileServices;
+using System.Windows.Media.Imaging;
 
 namespace projectArduinoFirstTry
 {
@@ -23,81 +16,128 @@ namespace projectArduinoFirstTry
     /// </summary>
     public partial class MainWindow : Window
     {
-        internal static Dictionary<long, Medicine> Dict
+        internal static List<Medicine> Dict
         {
-            get { return _dict; }
-            set { _dict = value; }
+            get { return _medicineForDemo.MedicineVal; }
+            set { _medicineForDemo.MedicineVal = value; }
         }
+        private readonly SpeechRecognitionEngine _speechRecognizer = new SpeechRecognitionEngine();
+        private bool _isMicEnabled = true;
+        private IReceiverBluetoothService receiver = new ReceiverBluetoothService();
 
         public MainWindow()
         {
             InitializeComponent();
+            
+            JasonHandler();
 
-            _dict = new Dictionary<long, Medicine>
-            {
-                {1, new Medicine("Acamol", new DateTime(10, 10, 10), 1)},
-                {2, new Medicine("Aspirine", new DateTime(10, 10, 10), 2)},
-                {3, new Medicine("Zodorom", new DateTime(10, 10, 10), 3)},
-                {4, new Medicine("Ritalin", new DateTime(10, 10, 10), 4)},
-                {5, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {6, new Medicine("Acamol", new DateTime(10, 10, 10), 1)},
-                {7, new Medicine("Aspirine", new DateTime(10, 10, 10), 2)},
-                {8, new Medicine("Zodorom", new DateTime(10, 10, 10), 3)},
-                {9, new Medicine("Ritalin", new DateTime(10, 10, 10), 4)},
-                {10, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {11, new Medicine("Acamol", new DateTime(10, 10, 10), 1)},
-                {12, new Medicine("Aspirine", new DateTime(10, 10, 10), 2)},
-                {13, new Medicine("Zodorom", new DateTime(10, 10, 10), 3)},
-                {14, new Medicine("Ritalin", new DateTime(10, 10, 10), 4)},
-                {15, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {16, new Medicine("Acamol", new DateTime(10, 10, 10), 1)},
-                {17, new Medicine("Aspirine", new DateTime(10, 10, 10), 2)},
-                {18, new Medicine("Zodorom", new DateTime(10, 10, 10), 3)},
-                {19, new Medicine("Ritalin", new DateTime(10, 10, 10), 4)},
-                {20, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {21, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {22, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {23, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {24, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {25, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {26, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {27, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {28, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {29, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {30, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {31, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {32, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {33, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {34, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {35, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {36, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {37, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {38, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {39, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {40, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {41, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-                {42, new Medicine("Omega3", new DateTime(10, 10, 10), 5)},
-            };
-
-            CloudInteract();
+            InitializeSpeechRecognizer();
         }
 
-        private async Task CloudInteract()
+        private void JasonHandler()
         {
-            int count = 1;
-            foreach (var medicine in _dict)
+            string jsonFile = "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\medicine.json";
+            var readAllText = File.ReadAllText(jsonFile);
+            JavaScriptSerializer ser = new JavaScriptSerializer();
+            _medicineForDemo = ser.Deserialize<MedicineList>(readAllText);
+        }
+
+        private void InitializeSpeechRecognizer()
+        {
+            _speechRecognizer.SpeechRecognized += speechRecognizer_SpeechRecognized;
+
+            GrammarBuilder grammarBuilder = new GrammarBuilder();
+
+            Choices commandChoices = new Choices("medicine");
+
+            grammarBuilder.Append(commandChoices);
+
+            Choices valueChoices = new Choices();
+
+            valueChoices.Add("Aspirine", "Akamol", "Omega3", "Zodorm");
+
+            grammarBuilder.Append(valueChoices);
+
+            _speechRecognizer.LoadGrammar(new Grammar(grammarBuilder));
+            _speechRecognizer.SetInputToDefaultAudioDevice();
+        }
+
+        private void speechRecognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        {
+            var firstWord = e.Result.Words[0].Text.ToLower();
+            if (e.Result.Words.Count != 2 && firstWord != "medicine")
             {
-                var medicineVal = medicine.Value;
-
-                Console.WriteLine(count);
-                
-                await App.MobileService.GetTable<Medicine>().InsertAsync(medicineVal);
-
-                count += 1;
+                return;
             }
+
+            var medicineName = e.Result.Words[1].Text.ToLower();
+
+            foreach (var medicine in _medicineForDemo.MedicineVal)
+            {
+                if (medicine.Name.ToLower() != medicineName)
+                {
+                    continue;
+                }
+
+                MedicineLbl.Content = medicineName.ToUpper();
+
+                UsagesText.Text = medicine.UserDesc;
+
+                DangersText.Text = medicine.DangersDesc;
+
+                BitmapImage bitImage = new BitmapImage();
+                bitImage.BeginInit();
+                bitImage.UriSource = new Uri(medicine.ImagePath);
+                bitImage.EndInit();
+
+                ImageContent.Source = bitImage;
+                break;
+            }
+
+            _speechRecognizer.SpeechRecognized += speechRecognizer_SpeechRecognized;
+
+            #region voice recognition with cases sample
+
+            //            Medicine.Content = e.Result.Words;
+
+            /*
+                if(e.Result.Words.Count == 2)
+                        {
+                                string command = e.Result.Words[0].Text.ToLower();
+                                string value = e.Result.Words[1].Text.ToLower();
+                                switch(command)
+                                {
+                                        case "weight":
+                                                FontWeightConverter weightConverter = new FontWeightConverter();
+                                                lblDemo.FontWeight = (FontWeight)weightConverter.ConvertFromString(value);
+                                                break;
+                                        case "color":
+                                                lblDemo.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(value));
+                                                break;
+                                        case "size":
+                                                switch(value)
+                                                {
+                                                        case "small":
+                                                                lblDemo.FontSize = 12;
+                                                                break;
+                                                        case "medium":
+                                                                lblDemo.FontSize = 24;
+                                                                break;
+                                                        case "large":
+                                                                lblDemo.FontSize = 48;
+                                                                break;
+                                                }
+                                                break;
+                                }
+                        }
+            */
+
+            #endregion
+
         }
 
         private static Dictionary<long, Medicine> _dict;
+        private static MedicineList _medicineForDemo;
 
         private void OnLoad(object sender, RoutedEventArgs e)
         {
@@ -106,16 +146,16 @@ namespace projectArduinoFirstTry
 
         private void PutMedicine()
         {
-            foreach (var medicine in _dict)
+            foreach (var medicine in _medicineForDemo.MedicineVal)
             {
-                var medicineVal = medicine.Value;
-                RowAdder.AddRow(medicineVal.Name, (int) medicineVal.Code, medicineVal.Date, DrugsGrid);
+                var medicineVal = medicine;
+                RowAdder.AddRow(medicineVal, DrugsGrid);
             }
 
             ExpandColums();
         }
 
-        private void ExpandColums()
+        internal  void ExpandColums()
         {
             Grid.SetRowSpan(Col1, RowAdder.RowSpan);
             Grid.SetRowSpan(Col2, RowAdder.RowSpan);
@@ -125,13 +165,27 @@ namespace projectArduinoFirstTry
 
         private void OnClickMice(object sender, RoutedEventArgs e)
         {
-            
+//            SpeechRecognizer speechRecognizer = new SpeechRecognizer();
+            if (_isMicEnabled)
+            {
+                _speechRecognizer.RecognizeAsync(RecognizeMode.Multiple);
+                _isMicEnabled = false;
+                return;
+            }
+
+            _isMicEnabled = true;
+            _speechRecognizer.RecognizeAsyncStop();
         }
 
         private void OnClickAdd(object sender, RoutedEventArgs e)
         {
-            Add popup = new Add();
+            Add popup = new Add(this);
             popup.ShowDialog();
+        }
+
+        private void OnClose(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
     }
 }
