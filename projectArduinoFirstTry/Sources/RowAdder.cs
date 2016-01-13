@@ -103,11 +103,6 @@ namespace projectArduinoFirstTry.Sources
             _grid.Children.Add(textBlock);
         }
 
-        private static void AddCell(int row)
-        {
-
-        }
-
         public static int RowSpan = 1;
         private static Grid _grid;
         static private int _rowCount = 1;

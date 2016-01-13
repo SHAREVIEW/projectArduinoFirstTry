@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized">
 
-    <Grid>
+    <Grid HorizontalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -101,6 +101,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <StackPanel Grid.Row ="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="35,0,0,0">
@@ -152,12 +153,27 @@
                 <Button Height="60" Width="60" Style="{StaticResource GlassButton}"  Click="OnClickAdd" Grid.Row="0" Grid.Column="0">
                     <Image Source="Images/Add.png" Height="30" Width="30"/>
                 </Button>
-                <Button Height="60" Width="60"  Style="{StaticResource GlassButton}" Margin="15,0,0,0" Grid.Row="0" Grid.Column="1">
+                <Button Height="60" Width="60"  Style="{StaticResource GlassButton}" Margin="15,0,0,0" Click="OnDeleteClick"  Grid.Row="0" Grid.Column="1">
                     <Image Source="Images/garbage.png" Height="30" Width="30" />
                 </Button>
                 <Button Name="MiceButton" Height="60" Width="60"  Style="{StaticResource GlassButton}"  Click="OnClickMice" Margin="15,0,0,0" Grid.Row="0" Grid.Column="2">
                     <Image Source="Images/Microphone.png" Height="30" Width="30"/>
                 </Button>
+            </Grid>
+            <Grid Grid.Row="3" Margin="0,50,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <RadioButton Grid.Column="0" Content="NFC" Width="100" Height="30" Margin="40,0,0,0" Click="onNFC"> </RadioButton>
+                <RadioButton x:Name="Laser"  Grid.Column="1" Content="Laser" Width="100" Height="30" Margin="20,0,0,0" Click="OnLaser"> </RadioButton>
+                <Ellipse x:Name="bluetoothIndicator" Grid.Column="2" Fill="Red" Height="40" Width="40" HorizontalAlignment="Right" Margin="0,0,25,0" ></Ellipse>
             </Grid>
         </Grid>
     </Grid>
