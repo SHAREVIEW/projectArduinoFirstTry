@@ -5,7 +5,7 @@
         x:Class="projectArduinoFirstTry.MainWindow"
         Title="MainWindow"
         Loaded="OnLoad"
-       Background="Black"
+        Background="Black"
         WindowStyle="None" ResizeMode="NoResize"  
         WindowStartupLocation="CenterScreen"
         WindowState="Maximized">

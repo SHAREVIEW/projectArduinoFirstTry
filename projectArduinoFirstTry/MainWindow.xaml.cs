@@ -14,6 +14,7 @@ using Microsoft.WindowsAzure.Storage.Table;
 using System.Configuration;
 using System.Threading;
 using System.Windows.Media;
+using InTheHand.Net;
 
 namespace projectArduinoFirstTry
 {
@@ -24,15 +25,14 @@ namespace projectArduinoFirstTry
     {
         internal static List<Medicine> Dict
         {
-            get { return _medicineForDemo.MedicineVal; }
-            set { _medicineForDemo.MedicineVal = value; }
+            get { return _medicines.MedicineVal; }
+            set { _medicines.MedicineVal = value; }
         }
+        public Dictionary<int, MedicineInfo> MedicineInfoDict = new Dictionary<int, MedicineInfo>();
+
         private readonly SpeechRecognitionEngine _speechRecognizer = new SpeechRecognitionEngine();
         private bool _isMicEnabled = true;
-        private CloudStorageAccount _storageAccount = null;
-        private CloudTableClient tableClient;
-        private CloudTable table;
-        private static MedicineList _medicineForDemo;
+        private static MedicineList _medicines;
         
         public MainWindow()
         {
@@ -42,78 +42,13 @@ namespace projectArduinoFirstTry
 
             InitializeSpeechRecognizer();
 
-            //BluetoothHandler.MakeConnection("NFC Scanner");
-            //BluetoothHandler.MakeConnection("Galaxy Note5");
+            //AzureHandler.InitializeAzureStorage();
 
-            //InitializeAzureStorage();
+            //AzureHandler.InsertToTable();
 
-            //InsertToTable();
+            //AzureHandler.ReadFromTable();
 
-            //ReadFromTable();
-
-            //DeleteEntryFromTable();
-        }
-
-        private void InitializeAzureStorage()
-        {
-            _storageAccount = CloudStorageAccount.Parse(ConfigurationManager.AppSettings["StorageConnectionString"]);
-            // Create the table client.
-            tableClient = _storageAccount.CreateCloudTableClient();
-
-            // Create the table if it doesn't exist.
-            table = tableClient.GetTableReference("medicine");
-            table.CreateIfNotExists();
-        }
-
-        public void InsertToTable()
-        {
-            MedicineEntity medicine1 = new MedicineEntity("9721356", "Omega3");
-            medicine1.Date = "12/4/3";
-            medicine1.DangersDesc = "Sivan U R the best. ";
-            medicine1.UserDesc = "Sivan U gonna be a star <3";
-
-            // Create the TableOperation object that inserts the customer entity.
-            TableOperation insertOperation = TableOperation.Insert(medicine1);
-
-            // Execute the insert operation.
-            table.Execute(insertOperation);
-        }
-
-        public void ReadFromTable()
-        {
-            // Construct the query operation for all customer entities where PartitionKey="Smith".
-            TableQuery<MedicineEntity> query = new TableQuery<MedicineEntity>();//.Where(/*TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "Smith")*/);
-
-            // Print the fields for each customer.
-            foreach (MedicineEntity entity in table.ExecuteQuery(query))
-            {
-                Console.WriteLine("{0}, {1}\t{2}\t{3}\t{4}", entity.PartitionKey, entity.RowKey,
-                    entity.Date, entity.UserDesc, entity.DangersDesc);
-            }
-
-        }
-
-        private void DeleteEntryFromTable()
-        {
-            // Create a retrieve operation that expects a customer entity.
-            TableOperation retrieveOperation = TableOperation.Retrieve<MedicineEntity>("Omega3", "9721356");
-
-            // Execute the operation.
-            TableResult retrievedResult = table.Execute(retrieveOperation);
-
-            // Assign the result to a CustomerEntity.
-            MedicineEntity deleteEntity = (MedicineEntity) retrievedResult.Result;
-
-            // Create the Delete TableOperation.
-            if (deleteEntity != null)
-            {
-                TableOperation deleteOperation = TableOperation.Delete(deleteEntity);
-                // Execute the operation.
-                table.Execute(deleteOperation);
-                Console.WriteLine("Entity deleted.");
-            }
-            else
-                Console.WriteLine("Could not retrieve the entity.");
+            //AzureHandler.DeleteEntryFromTable();
         }
 
         private void JasonHandler()
@@ -121,11 +56,13 @@ namespace projectArduinoFirstTry
             string jsonFile = "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\medicine.json";
             var readAllText = File.ReadAllText(jsonFile);
             JavaScriptSerializer ser = new JavaScriptSerializer();
-            _medicineForDemo = ser.Deserialize<MedicineList>(readAllText);
+            _medicines = ser.Deserialize<MedicineList>(readAllText);
         }
 
         private void InitializeSpeechRecognizer()
         {
+            _speechRecognizer.UnloadAllGrammars();
+
             _speechRecognizer.SpeechRecognized += speechRecognizer_SpeechRecognized;
 
             GrammarBuilder grammarBuilder = new GrammarBuilder();
@@ -154,7 +91,7 @@ namespace projectArduinoFirstTry
 
             var medicineName = e.Result.Words[1].Text.ToLower();
 
-            foreach (var medicine in _medicineForDemo.MedicineVal)
+            foreach (var medicine in _medicines.MedicineVal)
             {
                 if (medicine.Name.ToLower() != medicineName)
                 {
@@ -166,6 +103,11 @@ namespace projectArduinoFirstTry
                 UsagesText.Text = medicine.UserDesc;
 
                 DangersText.Text = medicine.DangersDesc;
+
+                if (medicine.ImagePath == string.Empty)
+                {
+                    return;
+                }
 
                 BitmapImage bitImage = new BitmapImage();
                 bitImage.BeginInit();
@@ -224,7 +166,7 @@ namespace projectArduinoFirstTry
 
         private void PutMedicine()
         {
-            foreach (var medicine in _medicineForDemo.MedicineVal)
+            foreach (var medicine in _medicines.MedicineVal)
             {
                 var medicineVal = medicine;
                 RowAdder.AddRow(medicineVal, DrugsGrid);
@@ -243,15 +185,20 @@ namespace projectArduinoFirstTry
 
         private void OnClickMice(object sender, RoutedEventArgs e)
         {
-            if (_isMicEnabled)
             {
-                _speechRecognizer.RecognizeAsync(RecognizeMode.Multiple);
-                _isMicEnabled = false;
-                return;
+               _speechRecognizer.RecognizeAsync(RecognizeMode.Multiple);
             }
 
-            _isMicEnabled = true;
+            DateTime start = DateTime.Now;
+
+            while (DateTime.Now < start + TimeSpan.FromSeconds(10))
+            {
+                MedicineLbl.IsEnabled = false;
+            }
+            
             _speechRecognizer.RecognizeAsyncStop();
+
+            MedicineLbl.IsEnabled = false;
         }
 
         private void OnClickAdd(object sender, RoutedEventArgs e)
@@ -272,33 +219,21 @@ namespace projectArduinoFirstTry
 
         private void OnDeleteClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                while (Laser.IsChecked != null && !Laser.IsChecked.Value)
-                {
-                    BluetoothHandler.GetStrFromBluetooth();
-                }
-            }
-            catch (System.Security.Cryptography.CryptographicException cryptographicException)
-            {
-                Console.WriteLine(cryptographicException);
-                Thread.Sleep(1000);
-            }
-
-            MessageBox.Show("Told ya");
+            BluetoothHandler.GetStrFromBluetooth();
         }
 
         private void onNFC(object sender, RoutedEventArgs e)
         {
-            BluetoothHandler.Close();
-            BluetoothHandler.MakeConnection("NFC Scanner");
+            BluetoothAddress btAddress = new BluetoothAddress(new byte[]{252, 27, 32, 49, 211, 152, 0, 0});
+            BluetoothHandler.MakeConnection(btAddress);
             bluetoothIndicator.Fill = !BluetoothHandler.IsConnected() ? new SolidColorBrush( Colors.Red) : new SolidColorBrush(Colors.Green);
         }
 
         private void OnLaser(object sender, RoutedEventArgs e)
         {
-            BluetoothHandler.Close();
-            BluetoothHandler.MakeConnection("Galaxy Note5");
+            BluetoothAddress btAddress = new BluetoothAddress(new byte[] { 17, 71, 48, 49, 211, 152, 0, 0 });
+            BluetoothHandler.MakeConnection(btAddress);
+
             if (!BluetoothHandler.IsConnected())
             {
                 bluetoothIndicator.Fill = new SolidColorBrush(Colors.Red);
@@ -306,6 +241,7 @@ namespace projectArduinoFirstTry
             else
             {
                 bluetoothIndicator.Fill = new SolidColorBrush(Colors.Green);
+                BluetoothHandler.SendAnglesToLaser(new DeltaAngle(160, 160));
             }
         }
     }

@@ -13,7 +13,6 @@ namespace projectArduinoFirstTry.Sources
         public string DangersDesc { get; set; }
         public string UserDesc { get; set; }
         public string ImagePath { get; set; }
-        
 
         public Medicine(string name, DateTime dateTime, int code) : this()
         {
@@ -70,5 +69,11 @@ namespace projectArduinoFirstTry.Sources
 
         public int DeltaX;
         public int DeltaY;
+    }
+
+    public class MedicineInfo
+    {
+        public DeltaAngle DeltaAngle;
+        public int Count;
     }
 }

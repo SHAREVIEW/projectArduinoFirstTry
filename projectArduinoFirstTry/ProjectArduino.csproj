@@ -162,13 +162,10 @@
     </Compile>
     <Compile Include="Interfaces\IReceiverBluetoothService.cs" />
     <Compile Include="Model\Device.cs" />
-    <Compile Include="Services\IReceiverBluetoothService.cs" />
-    <Compile Include="Services\ISenderBluetoothService.cs" />
-    <Compile Include="Services\ReceiverBluetoothService.cs" />
-    <Compile Include="Services\SenderBluetoothService.cs" />
+    <Compile Include="Sources\AesHandler.cs" />
+    <Compile Include="Sources\AzureHandler.cs" />
     <Compile Include="Sources\BluetoothHandler.cs" />
     <Compile Include="Sources\DataTypes.cs" />
-    <Compile Include="Sources\Device.cs" />
     <Compile Include="Sources\RowAdder.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
