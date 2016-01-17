@@ -236,7 +236,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -332,6 +334,31 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\barcode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\alloril.jpg" />
+    <Resource Include="Images\amelo.jpg" />
+    <Resource Include="Images\Amlodipine.jpg" />
+    <Resource Include="Images\aspirin.jpg" />
+    <Resource Include="Images\boserin.jpg" />
+    <Resource Include="Images\lorivan.jpg" />
+    <Resource Include="Images\muscol.jpg" />
+    <Resource Include="Images\nocturno.jpg" />
+    <Resource Include="Images\norvasc.jpg" />
+    <Resource Include="Images\ridazin.jpg" />
+    <Resource Include="Images\rispond.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\sprinoclatone.jpg" />
+    <Resource Include="Images\zaldiar.jpg" />
+    <Resource Include="Images\zinet.jpg" />
+    <Resource Include="Images\zodorm.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\brotizolam.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

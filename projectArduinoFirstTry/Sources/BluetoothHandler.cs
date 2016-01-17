@@ -74,7 +74,7 @@ namespace projectArduinoFirstTry.Sources
             string firstAnglesStr = $"{deltaAngle.DeltaX:D3}";
             string secondAnglesStr = $"{deltaAngle.DeltaY:D3}";
             
-            byte[] buffer = new byte[firstAnglesStr.Length * 2 + 2];
+            byte[] buffer = new byte[firstAnglesStr.Length  + secondAnglesStr.Length + 2];
             int index;
             for (index = 0; index < firstAnglesStr.Length; index++)
             {
@@ -83,26 +83,27 @@ namespace projectArduinoFirstTry.Sources
 
             buffer[index++] = (byte) ',';
 
-            for (; index < secondAnglesStr.Length; index++)
+            int secondIndex;
+            for (secondIndex = 0; secondIndex < secondAnglesStr.Length; secondIndex++)
             {
-                buffer[index] = (byte)secondAnglesStr[index];
+                buffer[index + secondIndex] = (byte)secondAnglesStr[secondIndex];
             }
 
-            buffer[index] = (byte) '$';
+            buffer[index + secondIndex] = (byte) '$';
 
             Stream peerStream = _cli.GetStream();
-            for (int i = 0; i < index; i++)
+            for (int i = 0; i < index + secondIndex + 1; i++)
             {
                 peerStream.WriteByte(buffer[i]);
             }
         }
 
-        public static void GetStrFromBluetooth()
+        public static string GetStrFromBluetooth()
         {
             Stream peerStream = _cli.GetStream();
 
             byte[] buffer = new byte[1000];
-            string str = "";
+            string str = string.Empty;
             byte length = (byte) peerStream.ReadByte();
             int byteRead = peerStream.ReadByte();
 
@@ -112,6 +113,7 @@ namespace projectArduinoFirstTry.Sources
                 buffer[i] = (byte)byteRead;
                 byteRead = peerStream.ReadByte();
             }
+
             byte[] encrypted = new byte[length];
             for (int i = 0; i < length; ++i)
             {
@@ -124,6 +126,8 @@ namespace projectArduinoFirstTry.Sources
             peerStream.ReadByte();
             peerStream.Flush();
             Thread.Sleep(2000);
+
+            return decrypted;
         }
 
         static public void Close()

@@ -27,31 +27,43 @@ namespace projectArduinoFirstTry.Sources
             _table.CreateIfNotExists();
         }
 
-        public static void InsertToTable()
+        public static void InsertToTable(Medicine medicine)
         {
-            MedicineEntity medicine1 = new MedicineEntity("9721356", "Omega3");
-            medicine1.Date = "12/4/3";
-            medicine1.DangersDesc = "Idan was here";
-            medicine1.UserDesc = "Idan was here";
+            MedicineEntity medicineToInsert = new MedicineEntity(medicine.Code.ToString(), medicine.Name);
+            medicineToInsert.Date = medicine.Date.ToString("d");
+            medicineToInsert.DangersDesc = medicine.DangersDesc;
+            medicineToInsert.UserDesc = medicine.UserDesc;
+            medicineToInsert.ImagePath = medicine.ImagePath;
+            medicineToInsert.Price = medicine.Price;
 
             // Create the TableOperation object that inserts the customer entity.
-            TableOperation insertOperation = TableOperation.Insert(medicine1);
+            TableOperation insertOperation = TableOperation.Insert(medicineToInsert);
 
             // Execute the insert operation.
             _table.Execute(insertOperation);
         }
 
-        public static void ReadFromTable()
+        public static MedicineList ReadFromTable()
         {
             // Construct the query operation for all customer entities where PartitionKey="Smith".
             TableQuery<MedicineEntity> query = new TableQuery<MedicineEntity>();//.Where(/*TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "Smith")*/);
 
+            MedicineList medicineList = new MedicineList();
             // Print the fields for each customer.
             foreach (MedicineEntity entity in _table.ExecuteQuery(query))
             {
-                Console.WriteLine("{0}, {1}\t{2}\t{3}\t{4}", entity.PartitionKey, entity.RowKey,
-                    entity.Date, entity.UserDesc, entity.DangersDesc);
+                Medicine medicineToAdd = new Medicine();
+                medicineToAdd.Code = long.Parse(entity.RowKey);
+                medicineToAdd.Name = entity.PartitionKey;
+                medicineToAdd.DangersDesc = entity.DangersDesc;
+                medicineToAdd.UserDesc = entity.UserDesc;
+                medicineToAdd.Price = entity.Price;
+                medicineToAdd.ImagePath = entity.ImagePath;
+                medicineToAdd.Date = DateTime.Parse(entity.Date);
+                medicineList.MedicineVal.Add(medicineToAdd);
             }
+
+            return medicineList;
         }
 
         public static void DeleteEntryFromTable()
@@ -76,6 +88,5 @@ namespace projectArduinoFirstTry.Sources
             else
                 Console.WriteLine("Could not retrieve the entity.");
         }
-
     }
 }

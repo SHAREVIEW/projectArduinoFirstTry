@@ -13,8 +13,9 @@ namespace projectArduinoFirstTry.Sources
         public string DangersDesc { get; set; }
         public string UserDesc { get; set; }
         public string ImagePath { get; set; }
+        public int Price { get; set; }
 
-        public Medicine(string name, DateTime dateTime, int code) : this()
+        public Medicine(string name, DateTime dateTime, long code) : this()
         {
             Name = name;
             Date = dateTime;
@@ -24,6 +25,11 @@ namespace projectArduinoFirstTry.Sources
         public int Compare(Medicine x, Medicine y)
         {
             return x.Code.CompareTo(y.Code);
+        }
+
+        public static implicit operator Predicate<object>(Medicine v)
+        {
+            throw new NotImplementedException();
         }
     }
     #endregion
@@ -48,14 +54,20 @@ namespace projectArduinoFirstTry.Sources
             this.RowKey = code;
         }
 
-        public MedicineEntity() { }
+        public MedicineEntity()
+        {
+        }
 
         public string Date { get; set; }
 
         public string DangersDesc { get; set; }
 
         public string UserDesc { get; set; }
-    }
+
+        public int Price { get; set; }
+
+        public string ImagePath { get; set; }
+}
 
     #endregion
 
@@ -73,6 +85,11 @@ namespace projectArduinoFirstTry.Sources
 
     public class MedicineInfo
     {
+        public MedicineInfo(DeltaAngle deltaAngle)
+        {
+            DeltaAngle = deltaAngle;
+        }
+
         public DeltaAngle DeltaAngle;
         public int Count;
     }
