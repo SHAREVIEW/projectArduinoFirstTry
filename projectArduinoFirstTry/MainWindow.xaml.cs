@@ -28,8 +28,7 @@ namespace projectArduinoFirstTry
             set { _medicineList.MedicineVal = value; }
         }
 
-        public readonly Dictionary<long, MedicineInfo> MedicineInfoDict = new Dictionary<long, MedicineInfo>();
-
+        private readonly Dictionary<long, MedicineInfo> MedicineInfoDict = new Dictionary<long, MedicineInfo>();
         private readonly SpeechRecognitionEngine _speechRecognizer = new SpeechRecognitionEngine();
         private static MedicineList _medicineList;
         private bool _isMicOn = false;
@@ -53,50 +52,6 @@ namespace projectArduinoFirstTry
             }
         }
 
-        private void InitializeDeltaAngles()
-        {
-            var medicineInfo = new MedicineInfo(new DeltaAngle(45, 39));
-            MedicineInfoDict.Add(7290008086363, medicineInfo);
-
-            medicineInfo = new MedicineInfo(new DeltaAngle(4, 40));
-            MedicineInfoDict.Add(7290008004664, medicineInfo);
-
-            medicineInfo = new MedicineInfo(new DeltaAngle(42, 40));
-            MedicineInfoDict.Add(7290008546287, medicineInfo);
-
-            medicineInfo = new MedicineInfo(new DeltaAngle(37, 41));
-            MedicineInfoDict.Add(729000002988, medicineInfo);
-
-            medicineInfo = new MedicineInfo(new DeltaAngle(33, 42));
-            MedicineInfoDict.Add(729008872317, medicineInfo);
-
-            medicineInfo = new MedicineInfo(new DeltaAngle(28, 42));
-            MedicineInfoDict.Add(729000801650, medicineInfo);
-
-            medicineInfo = new MedicineInfo(new DeltaAngle(23, 43));
-            MedicineInfoDict.Add(729008546126, medicineInfo);
-
-            medicineInfo = new MedicineInfo(new DeltaAngle(18, 42));
-            MedicineInfoDict.Add(729008546003, medicineInfo);
-
-            medicineInfo = new MedicineInfo(new DeltaAngle(12, 42));
-            MedicineInfoDict.Add(729000806198, medicineInfo);
-
-            medicineInfo = new MedicineInfo(new DeltaAngle(9, 40));
-            MedicineInfoDict.Add(7290102062218, medicineInfo);
-
-            medicineInfo = new MedicineInfo(new DeltaAngle(0, 39));
-            MedicineInfoDict.Add(7290000810027, medicineInfo);
-        }
-
-        private void JsonHandler()
-        {
-            string jsonFile = "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\medicine.json";
-            var readAllText = File.ReadAllText(jsonFile);
-            JavaScriptSerializer ser = new JavaScriptSerializer();
-            _medicineList = ser.Deserialize<MedicineList>(readAllText);
-        }
-
         internal void UpdateCounter(Medicine medicine, MainWindow mainWindow)
         {
             TextBlock textBlockCounter = (TextBlock)mainWindow.DrugsGrid.FindName($"count_{medicine.Code}");
@@ -108,6 +63,7 @@ namespace projectArduinoFirstTry
                 textBlockCounter.Text = count.ToString();
             }
         }
+
         private void InitializeSpeechRecognizer()
         {
             _speechRecognizer.UnloadAllGrammars();
@@ -216,10 +172,12 @@ namespace projectArduinoFirstTry
 
             #endregion
         }
+
         private void OnLoad(object sender, RoutedEventArgs e)
         {
             PutMedicine();
         }
+
         private void PutMedicine()
         {
             if (_medicineList == null)
@@ -327,6 +285,50 @@ namespace projectArduinoFirstTry
         {
             if (e.ChangedButton == MouseButton.Left)
                 DragMove();
+        }
+
+        private void InitializeDeltaAngles()
+        {
+            var medicineInfo = new MedicineInfo(new DeltaAngle(50, 33));
+            MedicineInfoDict.Add(7290008086363, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(5, 39));
+            MedicineInfoDict.Add(7290008004664, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(44, 37));
+            MedicineInfoDict.Add(7290008546287, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(39, 38));
+            MedicineInfoDict.Add(729000002988, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(36, 39));
+            MedicineInfoDict.Add(729008872317, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(30, 39));
+            MedicineInfoDict.Add(729000801650, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(23, 41));
+            MedicineInfoDict.Add(729008546126, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(16, 40));
+            MedicineInfoDict.Add(729008546003, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(13, 41));
+            MedicineInfoDict.Add(729000806198, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(9, 40));
+            MedicineInfoDict.Add(7290102062218, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(0, 39));
+            MedicineInfoDict.Add(7290000810027, medicineInfo);
+        }
+
+        private static void JsonHandler()
+        {
+            string jsonFile = "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\medicine.json";
+            var readAllText = File.ReadAllText(jsonFile);
+            JavaScriptSerializer ser = new JavaScriptSerializer();
+            _medicineList = ser.Deserialize<MedicineList>(readAllText);
         }
     }
 }

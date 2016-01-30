@@ -1,0 +1,127 @@
+{
+  "MedicineVal": [
+    {
+      "Name": "Zinnat",
+      "Date": "1-1-2016",
+      "Code": "7290008086363",
+      "DangersDesc": "Hepatotoxicity, \n Hematologic \n neutropenia \n Hypersensitivity",
+      "UserDesc": "Relief of pain and \n fever of different \n etiologies such as \n headache, toothache",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\zinet.jpg"
+    },
+    {
+      "Name": "Lorivan",
+      "Date": "1-1-2016",
+      "Code": "7290008004664",
+      "DangersDesc": "Gastrointestinal ulcers,\nstomach bleeding, \nand ringing in the ears",
+      "UserDesc": "Pain, fever, \nand inflammation",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\lorivan.jpg"
+    },
+    {
+      "Name": "Nocturno",
+      "Date": "1-1-2016",
+      "Code": "7290000812335",
+      "DangersDesc": "Rash, swallowing or \nbreathing difficulties",
+      "UserDesc": "Treatment of sever\n sleep disorders",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\nocturno.jpg"
+    },
+    {
+      "Name": "Vader",
+      "Date": "1-1-2016",
+      "Code": "4298593293209",
+      "DangersDesc": "May contain a DEATH STAR\n and usage of the \nDARK SIDE of the force",
+      "UserDesc": "important for\n Darth Vader",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\vader.png"
+    },
+    {
+      "Name": "Brotizolam",
+      "Date": "1-1-2016",
+      "Code": "7290008097376",
+      "DangersDesc": "Headache, dizziness, \nfatigue, impairment of \nmotor functions, slurred\nspeech, confusion, and\n clumsiness.",
+      "UserDesc": "Treatment of severe or\ndebilitating insomnia",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\brotizolam.jpg"
+    },
+    {
+      "Name": "Rispond",
+      "Date": "1-1-2016",
+      "Code": "7290008546287",
+      "DangersDesc": "Dizziness,\n sight disfunction",
+      "UserDesc": "Management of \nschizophrania and \nmanifestation of \npsychotic disorders",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\rispond.jpg"
+    },
+    {
+      "Name": "Norvasc",
+      "Date": "1-1-2016",
+      "Code": "729000002988",
+      "DangersDesc": "Fatigue, nausea, \nabdominal pain, \nsomnolence",
+      "UserDesc": "Used to lower blood \npressure and prevent \nchest pain",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\norvasc.jpg"
+    },
+    {
+      "Name": "Zaldiar",
+      "Date": "1-1-2016",
+      "Code": "729008872317",
+      "DangersDesc": "Pain relief",
+      "UserDesc": "Dizziness, fatigue,\n nausea, abdominal pain",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\zaldiar.jpg"
+    },
+    {
+      "Name": "Muscol",
+      "Date": "1-1-2016",
+      "Code": "729000801650",
+      "DangersDesc": "Relieve muscle pain",
+      "UserDesc": "Dry mouth, blurring of \nvision, dizziness",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\muscol.jpg"
+    },
+    {
+      "Name": "Amlow",
+      "Date": "1-1-2016",
+      "Code": "729008546126",
+      "DangersDesc": "Nausea, vomiting, \ndryness of the mouth",
+      "UserDesc": "Hypertension, chronic\n stable angina",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\amelo.jpg"
+    },
+    {
+      "Name": "Zodorm",
+      "Date": "1-1-2016",
+      "Code": "729008546003",
+      "DangersDesc": "Sleep walking, diarrhea,\n drowsiness",
+      "UserDesc": "Insomania",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\zodorm.gif"
+    },
+    {
+      "Name": "Alloril",
+      "Date": "1-1-2016",
+      "Code": "729000806198",
+      "DangersDesc": "Serious skin rashes,\nchest pains, joint pain",
+      "UserDesc": "Gout attacks and other\nconditions related to\nan excess of uric acid\nin the body",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\alloril.jpg"
+    },
+    {
+      "Name": "Amlodipine",
+      "Date": "1-1-2016",
+      "Code": "7290102062218",
+      "DangersDesc": "Peripheral edema,\ndizziness, palpitations,\nflushing",
+      "UserDesc": "Lowering blood pressure\nand prevent chest pain",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\Amlodipine.jpg"
+    },
+    {
+      "Name": "Spironolactone",
+      "Date": "1-1-2016",
+      "Code": "7290102066391",
+      "DangersDesc": "Urinary frequency,\nataxia, drowsiness,\ndry skin, and rashes",
+      "UserDesc": "Used to treat fluid\nbuild-up due to heart\nfailure, liver scarring,\nor kidney disease",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\sprinoclatone.jpg"
+    },
+    {
+      "Name": "Ridazin",
+      "Date": "1-1-2016",
+      "Code": "7290000810027",
+      "DangersDesc": "Dryness of the mouth,\nconstipation, diarrhea",
+      "UserDesc": "Treatment of \nschizophrenic patients",
+      "ImagePath": "C:\\Users\\admin\\Documents\\Visual Studio 2015\\Projects\\projectArduinoFirstTry\\projectArduinoFirstTry\\Images\\ridazin.jpg"
+    }
+  ]
+  
+}
+     
+
