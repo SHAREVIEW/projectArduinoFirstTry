@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net.Mime;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -11,7 +10,7 @@ namespace projectArduinoFirstTry.Sources
 {
     internal static class RowAdder
     {
-        public static void AddRow(Medicine medicine, MainWindow mainWindow, int index)
+        public static void AddRow(Medicine medicine, MainWindow mainWindow, int index, RoutedEventHandler onClickCheckBox)
         {
             _mainWindow = mainWindow;
             _grid = mainWindow.DrugsGrid;
@@ -22,77 +21,117 @@ namespace projectArduinoFirstTry.Sources
             AddTextBlock(++col, _rowCount, medicine.Name);
             AddTextBlock(++col, _rowCount, medicine.Date.ToShortDateString());
             AddCountTextBlock(++col, _rowCount, "1", $"count_{medicine.Code}");
-            AddTextBlock(++col, _rowCount, "20$");
+            AddTextBlock(++col, _rowCount, $"{medicine.Price}$");
 
-            col += 1;
             if (File.Exists(medicine.ImagePath))
             {
-                AddImage(col, _rowCount, medicine.ImagePath);
+                AddImage(++col, _rowCount, medicine.ImagePath);
             }
 
             AddTextBlock(++col, _rowCount, medicine.Code.ToString());
+            AddCheckBox(++col, _rowCount, $"check_{medicine.Code}", onClickCheckBox);
+
+            _rowSpan += 1;
 
             _rowCount += 1;
 
-            if (_rowCount >= RowSpan)
-            {
-                RowSpan += 1;
-                AddLineInTable();
-            }
+            AddLineInTable();
 
             ExpandColums();
-        }
-
-        public static void AddRow(Medicine medicine, int index)
-        {
-            if (_grid == null)
-            {
-                return;
-            }
-
-            AddRow(medicine, _mainWindow, index);
         }
 
         private static void AddLineInTable()
         {
             //Add border
             var border = new Border();
-            Grid.SetRow(border, RowSpan);
+            Grid.SetRow(border, _rowSpan);
             Grid.SetColumn(border, 0);
             Grid.SetColumnSpan(border, 13);
 
             //Add row definition
-            var row = new RowDefinition();
-            row.Height = GridLength.Auto;
+            var row = new RowDefinition {Height = GridLength.Auto};
             _grid.RowDefinitions.Add(row);
-            border.BorderThickness = new Thickness(1, 1, 1, 1);
+
+            border.BorderThickness = new Thickness(0,0,0,1);
+
+            for (int col = 0; col <= 8; col += 2)
+            {
+                var verticalBorder = new Border();
+                AddBorderLine(verticalBorder, col, _rowSpan);
+            }
+
             border.BorderBrush = new SolidColorBrush(Color.FromRgb(128, 128, 128));
 
             _grid.Children.Add(border);
         }
-        internal static void ExpandColums()
+
+        private static void AddBorderLine(Border border, int col, int row)
         {
-            Grid.SetRowSpan(_mainWindow.Col1, RowAdder.RowSpan);
-            Grid.SetRowSpan(_mainWindow.Col2, RowAdder.RowSpan);
-            Grid.SetRowSpan(_mainWindow.Col3, RowAdder.RowSpan);
-            Grid.SetRowSpan(_mainWindow.Col4, RowAdder.RowSpan);
+            Grid.SetRow(border, row);
+            Grid.SetColumn(border, col);
+            border.BorderThickness = new Thickness(1, 0, 1, 0); //different thickness for vertical and horizontal lines
+            border.BorderBrush = new SolidColorBrush(Colors.Gray);
+            _grid.Children.Add(border);
         }
+        private static void ExpandColums()
+        {
+            Grid.SetRowSpan(_mainWindow.Col1, _rowSpan);
+            Grid.SetRowSpan(_mainWindow.Col2, _rowSpan);
+            Grid.SetRowSpan(_mainWindow.Col3, _rowSpan);
+            Grid.SetRowSpan(_mainWindow.Col4, _rowSpan);
+        }
+
         private static void AddTextBlock(int col, int row, string text)
         {
             var textBlock = new TextBlock();
 
-            AddTextBlockAux(col, row, text, textBlock);
+            AddTextBlockAux(col, row, text, textBlock, HorizontalAlignment.Left, VerticalAlignment.Center);
 
             _grid.Children.Add(textBlock);
         }
 
-        private static void AddTextBlockAux(int col, int row, string text, TextBlock textBlock)
+        internal static void AddTextBlockExternal(int col, int row, string text, Grid grid, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment)
+        {
+            var textBlock = new TextBlock();
+
+            AddTextBlockAux(col, row, text, textBlock, horizontalAlignment, verticalAlignment);
+
+            grid.Children.Add(textBlock);
+        }
+
+        private static void AddCheckBox(int col, int row, string name, RoutedEventHandler onClickCheckBox)
+        {
+            var checkBox = new CheckBox();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                checkBox.Name = name;
+            }
+
+            checkBox.Click += onClickCheckBox;
+            checkBox.HorizontalAlignment = HorizontalAlignment.Center;
+            checkBox.VerticalAlignment = VerticalAlignment.Center;
+            Grid.SetRow(checkBox, row);
+            Grid.SetColumn(checkBox, col);
+            _grid.Children.Add(checkBox);
+
+            try
+            {
+                _grid.RegisterName(checkBox.Name, checkBox);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+        }
+
+        private static void AddTextBlockAux(int col, int row, string text, TextBlock textBlock, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment)
         {
             textBlock.Text = text;
             Grid.SetRow(textBlock, row);
             Grid.SetColumn(textBlock, col);
-            textBlock.HorizontalAlignment = HorizontalAlignment.Left;
-            textBlock.VerticalAlignment = VerticalAlignment.Center;
+            textBlock.HorizontalAlignment = horizontalAlignment;
+            textBlock.VerticalAlignment = verticalAlignment;
             textBlock.FontSize = 16;
             textBlock.Foreground = Brushes.White;
             textBlock.Padding = new Thickness(10, 0, 10, 0);
@@ -100,9 +139,9 @@ namespace projectArduinoFirstTry.Sources
 
         private static void AddCountTextBlock(int col, int row, string text, string name)
         {
-            TextBlock textBlock = new TextBlock();
+            var textBlock = new TextBlock();
 
-            AddTextBlockAux(col, row, text, textBlock);
+            AddTextBlockAux(col, row, text, textBlock, HorizontalAlignment.Left, VerticalAlignment.Center);
 
             if (!string.IsNullOrEmpty(name))
             {
@@ -111,17 +150,27 @@ namespace projectArduinoFirstTry.Sources
             }
 
             _grid.Children.Add(textBlock);
-            _grid.RegisterName(name, textBlock);
+
+            try
+            {
+                if (name != null) _grid.RegisterName(name, textBlock);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private static void AddImage(int col, int row, string imagePath)
         {
             //Set Image Source
-            Image image = new Image();
-            image.Height = 40;
-            image.Width = 80;
-            
-            BitmapImage bitImage = new BitmapImage();
+            var image = new Image
+            {
+                Height = 40,
+                Width = 80
+            };
+
+            var bitImage = new BitmapImage();
             bitImage.BeginInit();
             bitImage.UriSource = new Uri(imagePath);
             bitImage.EndInit();
@@ -129,11 +178,10 @@ namespace projectArduinoFirstTry.Sources
             image.Source = bitImage;
 
             //Put image inside a container
-            InlineUIContainer inlineUiContainer = new InlineUIContainer();
-            inlineUiContainer.Child = image;
+            var inlineUiContainer = new InlineUIContainer {Child = image};
 
             //New Text Block
-            TextBlock textBlock = new TextBlock();
+            var textBlock = new TextBlock();
             textBlock.Inlines.Add(inlineUiContainer);
             Grid.SetRow(textBlock, row);
             Grid.SetColumn(textBlock, col);
@@ -141,10 +189,10 @@ namespace projectArduinoFirstTry.Sources
             textBlock.TextAlignment = TextAlignment.Center;
             _grid.Children.Add(textBlock);
         }
-
-        public static int RowSpan = 1;
+        
+        private static int _rowSpan;
         private static Grid _grid;
-        static private int _rowCount = 1;
+        private static int _rowCount = 1;
         private static MainWindow _mainWindow;
     }
 }

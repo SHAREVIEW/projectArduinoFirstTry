@@ -29,12 +29,14 @@ namespace projectArduinoFirstTry.Sources
 
         public static void InsertToTable(Medicine medicine)
         {
-            MedicineEntity medicineToInsert = new MedicineEntity(medicine.Code.ToString(), medicine.Name);
-            medicineToInsert.Date = medicine.Date.ToString("d");
-            medicineToInsert.DangersDesc = medicine.DangersDesc;
-            medicineToInsert.UserDesc = medicine.UserDesc;
-            medicineToInsert.ImagePath = medicine.ImagePath;
-            medicineToInsert.Price = medicine.Price;
+            var medicineToInsert = new MedicineEntity(medicine.Code.ToString(), medicine.Name)
+            {
+                Date = medicine.Date.ToString("d"),
+                DangersDesc = medicine.DangersDesc,
+                UserDesc = medicine.UserDesc,
+                ImagePath = medicine.ImagePath,
+                Price = medicine.Price
+            };
 
             // Create the TableOperation object that inserts the customer entity.
             TableOperation insertOperation = TableOperation.Insert(medicineToInsert);

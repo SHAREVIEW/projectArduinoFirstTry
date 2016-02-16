@@ -10,9 +10,7 @@
         </ResourceDictionary>
         <ResourceDictionary Source="Themes/RoundedButton.xaml">
         </ResourceDictionary>
-        <ResourceDictionary Source="Themes/CustomButton/ButtonStyle.xaml">
-          <vm:ViewModelLocator x:Key="Locator" d:IsDataSource="True" xmlns:vm="clr-namespace:projectArduinoFirstTry.ViewModel" />
-        </ResourceDictionary>
+        
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>

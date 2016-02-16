@@ -5,7 +5,6 @@ using System.Speech.Recognition;
 using System.Windows;
 using System.Windows.Controls;
 using System.Web.Script.Serialization;
-using BluetoothSample.Services;
 using projectArduinoFirstTry.Sources;
 using System.Windows.Media.Imaging;
 using Microsoft.WindowsAzure.Storage;
@@ -28,11 +27,12 @@ namespace projectArduinoFirstTry
             set { _medicineList.MedicineVal = value; }
         }
 
-        private readonly Dictionary<long, MedicineInfo> MedicineInfoDict = new Dictionary<long, MedicineInfo>();
+        private readonly Dictionary<long, MedicineInfo> _medicineInfoDict = new Dictionary<long, MedicineInfo>(); //Dictionary of medicine and it's angles
         private readonly SpeechRecognitionEngine _speechRecognizer = new SpeechRecognitionEngine();
-        private static MedicineList _medicineList;
+        private static MedicineList _medicineList; //Medicine list from the cloud
         private bool _isMicOn = false;
-        
+        private static int _countClicks;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -52,16 +52,18 @@ namespace projectArduinoFirstTry
             }
         }
 
-        internal void UpdateCounter(Medicine medicine, MainWindow mainWindow)
+        internal static void UpdateCounter(Medicine medicine, MainWindow mainWindow)
         {
-            TextBlock textBlockCounter = (TextBlock)mainWindow.DrugsGrid.FindName($"count_{medicine.Code}");
+            var textBlockCounter = (TextBlock)mainWindow.DrugsGrid.FindName($"count_{medicine.Code}");
 
             int count;
-            if (textBlockCounter != null && int.TryParse(textBlockCounter.Text, out count))
+            if (textBlockCounter == null || !int.TryParse(textBlockCounter.Text, out count))
             {
-                count += 1;
-                textBlockCounter.Text = count.ToString();
+                return;
             }
+
+            count += 1;
+            textBlockCounter.Text = count.ToString();
         }
 
         private void InitializeSpeechRecognizer()
@@ -126,59 +128,21 @@ namespace projectArduinoFirstTry
                 break;
             }
 
-            if (MedicineInfoDict.ContainsKey(medicine.Code) && BluetoothHandler.IsConnected())
+            if (_medicineInfoDict.ContainsKey(medicine.Code) && BluetoothHandler.IsConnected())
             {
-                BluetoothHandler.SendAnglesToLaser(MedicineInfoDict[medicine.Code].DeltaAngle);
+                BluetoothHandler.SendAnglesToLaser(_medicineInfoDict[medicine.Code].DeltaAngle);
                 Console.WriteLine("Got this medicine: {0}", medicine.Name);
             }
 
             _speechRecognizer.SpeechRecognized += speechRecognizer_SpeechRecognized;
-            
-            #region voice recognition with cases sample
-
-            //            Medicine.Content = e.Result.Words;
-
-            /*
-                if(e.Result.Words.Count == 2)
-                        {
-                                string command = e.Result.Words[0].Text.ToLower();
-                                string value = e.Result.Words[1].Text.ToLower();
-                                switch(command)
-                                {
-                                        case "weight":
-                                                FontWeightConverter weightConverter = new FontWeightConverter();
-                                                lblDemo.FontWeight = (FontWeight)weightConverter.ConvertFromString(value);
-                                                break;
-                                        case "color":
-                                                lblDemo.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(value));
-                                                break;
-                                        case "size":
-                                                switch(value)
-                                                {
-                                                        case "small":
-                                                                lblDemo.FontSize = 12;
-                                                                break;
-                                                        case "medium":
-                                                                lblDemo.FontSize = 24;
-                                                                break;
-                                                        case "large":
-                                                                lblDemo.FontSize = 48;
-                                                                break;
-                                                }
-                                                break;
-                                }
-                        }
-            */
-
-            #endregion
         }
 
         private void OnLoad(object sender, RoutedEventArgs e)
         {
-            PutMedicine();
+            PutMedicinesInTable();
         }
 
-        private void PutMedicine()
+        private void PutMedicinesInTable()
         {
             if (_medicineList == null)
             {
@@ -186,12 +150,65 @@ namespace projectArduinoFirstTry
             }
 
             var medicines = _medicineList.MedicineVal;
-            for (int index = 0; index < medicines.Count; index++)
+            
+            for (var index = 0; index < medicines.Count; index++)
             {
                 var medicine = medicines[index];
-                var medicineVal = medicine;
-                RowAdder.AddRow(medicineVal, this, index + 1);
+
+                var checkBox = DrugsGrid.FindName($"check_{medicine.Code}");
+                var isChecked = ((CheckBox) checkBox)?.IsChecked;
+                if (isChecked != null && isChecked.Value)
+                {
+                    index += 1; //Go to the next medicine
+                    medicines.Remove(medicine);
+                    continue;
+                }
+
+                RowAdder.AddRow(medicine, this, index + 1, OnClickCheckBox);
             }
+
+            PrepareTable(medicines.Count);
+        }
+
+        private void PrepareTable(int count)
+        {
+            const int colCount = 8;
+            int rowSpan = count > 28 ? 28 : count;
+
+            for (int col = 0; col <= colCount; col += 2)
+            {
+                var verticalBorder = new Border();
+                AddBorderLine(verticalBorder, col, 0, rowSpan, 1);
+            }
+
+            const int colSpan = 13;
+            var horizontalBorder = new Border();
+            AddBorderLine(horizontalBorder, 0, 0, 1, colSpan);
+           
+            PutTableHeader();
+        }
+
+        private void PutTableHeader()
+        {
+            RowAdder.AddTextBlockExternal(0, 0, "Item", DrugsGrid, HorizontalAlignment.Center, VerticalAlignment.Center);
+            RowAdder.AddTextBlockExternal(1, 0, "Name", DrugsGrid, HorizontalAlignment.Center, VerticalAlignment.Center);
+            RowAdder.AddTextBlockExternal(2, 0, "Date", DrugsGrid, HorizontalAlignment.Center, VerticalAlignment.Center);
+            RowAdder.AddTextBlockExternal(3, 0, "Amount", DrugsGrid, HorizontalAlignment.Center, VerticalAlignment.Center);
+            RowAdder.AddTextBlockExternal(4, 0, "Price", DrugsGrid, HorizontalAlignment.Center, VerticalAlignment.Center);
+            RowAdder.AddTextBlockExternal(5, 0, "Picture", DrugsGrid, HorizontalAlignment.Center, VerticalAlignment.Center);
+            RowAdder.AddTextBlockExternal(6, 0, "Item_Code", DrugsGrid, HorizontalAlignment.Center, VerticalAlignment.Center);
+            RowAdder.AddTextBlockExternal(7, 0, "", DrugsGrid, HorizontalAlignment.Center, VerticalAlignment.Center);
+        }
+
+        private void AddBorderLine(Border border, int col, int row, int rowSpan, int colSpan)
+        {
+            Grid.SetRowSpan(border, rowSpan);
+            Grid.SetColumnSpan(border, colSpan);
+            Grid.SetRow(border, row);
+            Grid.SetColumn(border, col);
+            border.BorderThickness = rowSpan > 1 ? new Thickness(1, 0, 1, 0) : new Thickness(0, 1, 0, 1); //different thickness for vertical and horizontal lines
+            border.BorderBrush = new SolidColorBrush(Colors.Gray);
+            DrugsGrid.Children.Add(border);
         }
 
         private void OnClickMice(object sender, RoutedEventArgs e)
@@ -211,10 +228,20 @@ namespace projectArduinoFirstTry
             _isMicOn = false;
         }
 
-        private void OnClickAdd(object sender, RoutedEventArgs e)
+        private void OnClickAddOrRemove(object sender, RoutedEventArgs e)
         {
-            Add popup = new Add(this);
-            popup.ShowDialog();
+            if (_countClicks == 0)
+            {
+                 Add popup = new Add(this);
+                 popup.ShowDialog();
+                 return;
+            }
+
+            _countClicks = 0;
+
+            DrugsGrid.Children.Clear();
+
+            PutMedicinesInTable();
         }
 
         private void OnClose(object sender, RoutedEventArgs e)
@@ -244,7 +271,7 @@ namespace projectArduinoFirstTry
 
                 medicines.Add(medicine);
 
-                RowAdder.AddRow(medicine, this, medicines.Count);
+                RowAdder.AddRow(medicine, this, medicines.Count, OnClickCheckBox);
             }
             catch (Exception exception)
             {
@@ -259,7 +286,7 @@ namespace projectArduinoFirstTry
             BluetoothHandler.Close();
         }
 
-        private void onNFC(object sender, RoutedEventArgs e)
+        private void OnNfc(object sender, RoutedEventArgs e)
         {
             BluetoothAddress btAddress = new BluetoothAddress(new byte[]{252, 27, 32, 49, 211, 152, 0, 0});
             BluetoothHandler.MakeConnection(btAddress);
@@ -280,47 +307,60 @@ namespace projectArduinoFirstTry
                 bluetoothIndicator.Fill = new SolidColorBrush(Colors.Green);
             }
         }
-
+        
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
                 DragMove();
         }
 
+        internal static void OnClickCheckBox(object sender, RoutedEventArgs e)
+        {
+            var isChecked = ((CheckBox)sender).IsChecked;
+            if (isChecked != null && isChecked.Value)
+            {
+                _countClicks += 1;
+            }
+            else if(_countClicks > 0)
+            {
+                _countClicks -= 1;
+            }
+        }
+
         private void InitializeDeltaAngles()
         {
             var medicineInfo = new MedicineInfo(new DeltaAngle(50, 33));
-            MedicineInfoDict.Add(7290008086363, medicineInfo);
+            _medicineInfoDict.Add(7290008086363, medicineInfo);
 
             medicineInfo = new MedicineInfo(new DeltaAngle(5, 39));
-            MedicineInfoDict.Add(7290008004664, medicineInfo);
+            _medicineInfoDict.Add(7290008004664, medicineInfo);
 
             medicineInfo = new MedicineInfo(new DeltaAngle(44, 37));
-            MedicineInfoDict.Add(7290008546287, medicineInfo);
+            _medicineInfoDict.Add(7290008546287, medicineInfo);
 
             medicineInfo = new MedicineInfo(new DeltaAngle(39, 38));
-            MedicineInfoDict.Add(729000002988, medicineInfo);
+            _medicineInfoDict.Add(729000002988, medicineInfo);
 
             medicineInfo = new MedicineInfo(new DeltaAngle(36, 39));
-            MedicineInfoDict.Add(729008872317, medicineInfo);
+            _medicineInfoDict.Add(729008872317, medicineInfo);
 
             medicineInfo = new MedicineInfo(new DeltaAngle(30, 39));
-            MedicineInfoDict.Add(729000801650, medicineInfo);
+            _medicineInfoDict.Add(729000801650, medicineInfo);
 
             medicineInfo = new MedicineInfo(new DeltaAngle(23, 41));
-            MedicineInfoDict.Add(729008546126, medicineInfo);
+            _medicineInfoDict.Add(729008546126, medicineInfo);
 
             medicineInfo = new MedicineInfo(new DeltaAngle(16, 40));
-            MedicineInfoDict.Add(729008546003, medicineInfo);
+            _medicineInfoDict.Add(729008546003, medicineInfo);
 
             medicineInfo = new MedicineInfo(new DeltaAngle(13, 41));
-            MedicineInfoDict.Add(729000806198, medicineInfo);
+            _medicineInfoDict.Add(729000806198, medicineInfo);
 
             medicineInfo = new MedicineInfo(new DeltaAngle(9, 40));
-            MedicineInfoDict.Add(7290102062218, medicineInfo);
+            _medicineInfoDict.Add(7290102062218, medicineInfo);
 
             medicineInfo = new MedicineInfo(new DeltaAngle(0, 39));
-            MedicineInfoDict.Add(7290000810027, medicineInfo);
+            _medicineInfoDict.Add(7290000810027, medicineInfo);
         }
 
         private static void JsonHandler()

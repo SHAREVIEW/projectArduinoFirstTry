@@ -43,14 +43,14 @@ namespace projectArduinoFirstTry
             Predicate<Medicine> medicineFinder = (Medicine m) => { return m.Code == medicineCode; };
             if (medicines.Exists(medicineFinder))
             {
-                _mainWindow.UpdateCounter(medicine, _mainWindow);
+                MainWindow.UpdateCounter(medicine, _mainWindow);
 
                 return;
             }
 
             medicines.Add(medicine);
 
-            RowAdder.AddRow(medicine, _mainWindow, medicines.Count);
+            RowAdder.AddRow(medicine, _mainWindow, medicines.Count, MainWindow.OnClickCheckBox);
         }
         
         private void btnOpenFile_Click(object sender, RoutedEventArgs e)
