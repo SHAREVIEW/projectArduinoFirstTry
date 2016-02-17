@@ -329,38 +329,47 @@ namespace projectArduinoFirstTry
 
         private void InitializeDeltaAngles()
         {
-            var medicineInfo = new MedicineInfo(new DeltaAngle(50, 33));
+            var medicineInfo = new MedicineInfo(new DeltaAngle(29, 25));
             _medicineInfoDict.Add(7290008086363, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(14, 27));
+            _medicineInfoDict.Add(7290008097376, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(17, 27));
+            _medicineInfoDict.Add(729000806198, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(21, 26));
+            _medicineInfoDict.Add(7290102062281, medicineInfo);
 
             medicineInfo = new MedicineInfo(new DeltaAngle(5, 39));
             _medicineInfoDict.Add(7290008004664, medicineInfo);
 
-            medicineInfo = new MedicineInfo(new DeltaAngle(44, 37));
+            medicineInfo = new MedicineInfo(new DeltaAngle(34, 24));
             _medicineInfoDict.Add(7290008546287, medicineInfo);
 
-            medicineInfo = new MedicineInfo(new DeltaAngle(39, 38));
+            medicineInfo = new MedicineInfo(new DeltaAngle(37, 23));
             _medicineInfoDict.Add(729000002988, medicineInfo);
 
-            medicineInfo = new MedicineInfo(new DeltaAngle(36, 39));
-            _medicineInfoDict.Add(729008872317, medicineInfo);
+            medicineInfo = new MedicineInfo(new DeltaAngle(41, 22));
+            _medicineInfoDict.Add(7290008872317, medicineInfo);
 
-            medicineInfo = new MedicineInfo(new DeltaAngle(30, 39));
+            medicineInfo = new MedicineInfo(new DeltaAngle(39, 22));
             _medicineInfoDict.Add(729000801650, medicineInfo);
 
-            medicineInfo = new MedicineInfo(new DeltaAngle(23, 41));
-            _medicineInfoDict.Add(729008546126, medicineInfo);
+            medicineInfo = new MedicineInfo(new DeltaAngle(6, 27));
+            _medicineInfoDict.Add(7290008546126, medicineInfo);
 
-            medicineInfo = new MedicineInfo(new DeltaAngle(16, 40));
+            medicineInfo = new MedicineInfo(new DeltaAngle(26, 26));
             _medicineInfoDict.Add(729008546003, medicineInfo);
 
-            medicineInfo = new MedicineInfo(new DeltaAngle(13, 41));
-            _medicineInfoDict.Add(729000806198, medicineInfo);
-
-            medicineInfo = new MedicineInfo(new DeltaAngle(9, 40));
+            medicineInfo = new MedicineInfo(new DeltaAngle(21, 26));
             _medicineInfoDict.Add(7290102062218, medicineInfo);
 
-            medicineInfo = new MedicineInfo(new DeltaAngle(0, 39));
+            medicineInfo = new MedicineInfo(new DeltaAngle(31, 25));
             _medicineInfoDict.Add(7290000810027, medicineInfo);
+
+            medicineInfo = new MedicineInfo(new DeltaAngle(10, 27));
+            _medicineInfoDict.Add(7290000812335, medicineInfo);
         }
 
         private static void JsonHandler()

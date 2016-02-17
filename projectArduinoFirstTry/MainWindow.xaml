@@ -11,7 +11,7 @@
         WindowStyle="None" ResizeMode="CanResize"  
         WindowStartupLocation="CenterOwner"
         MouseDown="Window_MouseDown"
-        WindowState="Normal">
+        WindowState="Maximized">
     <Border BorderBrush="White" BorderThickness="1,1,1,1" CornerRadius="8,8,8,8"  Background="Black" Margin="20">
         <Grid HorizontalAlignment="Center" Name="MainGrid">
             <Grid.RowDefinitions>
